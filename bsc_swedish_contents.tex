@@ -3,11 +3,14 @@
 
 Redan för många årtionde har robot navigering med datorseende varit i stort popularitet i det vetenskapliga samfundet. <kårt om historia>
 
-Drönare är ett obemannat luftfordon som kan styras med hjälp av vision baserad, tröghets eller satellitnavigation \citep{geospatial}. För att roboter eller drönaren skulle kunna navigera autonomiskt måste den vara medveten om sitt läge, hastighet, kursriktning samt start- och slutplats. Andra faktorer som borde beaktas för att flyga från start till slutplatsen är hur drönaren kan behandla data från inbyggda sensorer i sig, det vill säga kartlägga miljön och egen position i denna miljö samt hur man planerar vägen utan att kollidera med hinder. Mest lovande forskning är inom vision baserad navigering med hjälp av datorseende.
+<berätta vad är drönare och navigering>
+Drönare är ett obemannat luftfordon som kan styras med hjälp av vision baserad, tröghets eller satellitnavigation \citep{geospatial}. För att roboter eller drönaren skulle kunna navigera autonomiskt måste den vara medveten om sitt läge, hastighet, kursriktning samt start- och slutplats. Andra faktorer som borde beaktas för att flyga från start till slutplatsen är hur drönaren kan behandla data från inbyggda sensorer i sig, det vill säga kartlägga miljön och egen position i denna miljö samt hur man planerar vägen utan att kollidera med hinder under flygningen. Mest lovande forskning är inom vision baserad navigering med hjälp av datorseende.
 
+<vad avhandlingen kommer att fokusera på>
 Avhandlingen kommer att fokusera på vilka metoder det finns för att kartlägga miljön och lokalisera sig själv med hjälp av datorseende, som refereras också som samtidig lokalisering och kartläggning med datorseende (VSLAM, Visual Simultaenous Localization and Mapping). Avhandlingen kommer att innehålla ett sammandrag av metoder som används med drönaren. Några frågor vi provar att svara på är varför används vision baserad navigation istället för andra metoder? Vad är för och nackdelar med vision baserad navigation när det kommer till drönaren? .....
 
-Avhandlingens struktur är följande, i kapitell 1 så skriver vi om navigering med hjälp av datorseende, kapitell 2 innehåller information om samtidig lokalisering och kartläggning och hur kartläggning kan grupperas samt vilka metoder används i olika grupper. Kapitell 3 analys?, Kapitell 4, sammandragning
+<avhandling struktur>
+Avhandlingens struktur är följande, i kapitell 1 så skriver vi om navigering med hjälp av datorseende, kapitell 2 innehåller information om samtidig lokalisering och kartläggning och hur kartläggning kan grupperas samt vilka metoder används i olika grupper. Kapitell 3 analys, som skulle kunna innehålla vad för problem autonomsik navigering har med datorseende, hur det gjorts med drönaren, dvs. kalkyleringen av slam, vad för problem, Kapitell 4, sammandragning samt vad man borde researcha mera om och vad jag har uppfunnit under avhandlingen
 
 \chapter{Vision baserad navigation}
 
@@ -28,7 +31,8 @@ I system utan karta navigerar drönaren bara med hjälp av att observera tydliga
 Santos-Victor et. al har användt optisk flöde i en robot för att imitera bin \citep{341094}. De placerade två kameror på varsin sida av en robot och beräknade hastigheten från bilderna av båda kamerorna med att ta fem bilder som utjämnas med gaussisk oskräpa och sedan de två sista utjämnade bilder används för att räkna medeltalet av optisk flödesvektorer. Om flödesvektorerna var samma på båda sidorna så for roboten rakt framåt, annars så far den mot den sida vilkens hastighet är mindre. Metoden som Santos-Victor använde för roboten fungerar bara om båda kamerorna är symmetriskt riktade från varandra när man tar i beaktande rörelseriktningen \citep{982903}. Denna teknik fungerar inte heller i texturlösa miljöer och det går inte att byta rörelseriktningen. Sedan detta har användning av optiska flödesmetoder forskats mera och forskaren har fått drönaren att uppskatta avstånd, hålla sin altitud, undvika hinder, beräkna hastighet och landa på en plattform som rör på sig \citep{6564752}.
 
 \subsection{Spåring av egenskaper}
-Spåring av egenskaper används för att skaffa information om föremål, så som linjer, hörn och olika former som inte ändras \citep{geospatial}. Med hjälp av dessa och föremålets relativa rörelse i sekventiella bilder kan man bestämma föremålets rörelse. Då drönaren navigerar i området, så kommer den troligtvis att se dessa föremål från olika perspektiv, som hjälper drönaren att navigera.
+
+Spåring av egenskaper (Feature ) används för att skaffa information om föremål, så som linjer, hörn och olika former som inte ändras \citep{geospatial}. Med hjälp av dessa och föremålets relativa rörelse i sekventiella bilder kan man bestämma föremålets rörelse. Då drönaren navigerar i området, så kommer den troligtvis att se dessa föremål från olika perspektiv, som hjälper drönaren att navigera.
 
 \section{Kartbaserade system}
 
