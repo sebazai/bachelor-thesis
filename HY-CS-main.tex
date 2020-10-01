@@ -47,7 +47,7 @@
 %%      bio-line = Algorithmic bioinformatics specialisation line
 %%      nodes-line = Networking and Services specialisation line
 
-\documentclass[swedish,twoside,tkt]{HYthesisML}
+\documentclass[swedish,onesided,censored,tkt]{HYthesisML}
 
 
 % In theses, open new chapters only at right page.
@@ -116,12 +116,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set up personal information for the title page and the abstract form.
 %% Replace parameters with your information.
-\title{Lokalisering och kartläggning av drönaren}
+\title{Visuell lokalisering och kartläggning av drönaren}
 
 % TM: Contributors to template editors now listed in the beginning of the file in comments
 \author{Sebastian Sergelius}
 \date{\today}
-
 
 
 % Set supervisors and examiners, use the titles according to the thesis language
@@ -195,7 +194,7 @@
 
 \begin{abstract}
 
-Abstract
+Tämä dokumentti on tarkoitettu Helsingin yliopiston tietojenkäsittelytieteen osaston opin\-näyt\-teiden ja harjoitustöiden ulkoasun ohjeeksi ja mallipohjaksi. Ohje soveltuu kanditutkielmiin, ohjelmistotuotantoprojekteihin, seminaareihin ja maisterintutkielmiin. Tämän ohjeen lisäksi on seurattava niitä ohjeita, jotka opastavat valitsemaan kuhunkin osioon tieteellisesti kiinnostavaa, syvällisesti pohdittua sisältöä.
 
 
 Työn aihe luokitellaan  
@@ -240,10 +239,9 @@ Käytä muutamaa termipolkua (1--3), jotka alkavat juuritermistä ja joissa polu
 % BSc instructions
 %\include{bsc_finnish_contents}
 %\include{bsc_english_contents}
-\include{bsc_swedish_contents}
 % MSc instructions
 %\include{msc_finnish_contents}
-%\include{msc_english_contents}
+\include{bsc_swedish_contents}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cleardoublepage                          %fixes the position of bibliography in bookmarks
@@ -251,12 +249,12 @@ Käytä muutamaa termipolkua (1--3), jotka alkavat juuritermistä ja joissa polu
 \addcontentsline{toc}{chapter}{\bibname}  % This lines adds the bibliography to the ToC
 \printbibliography
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \backmatter
-% \begin{appendices}
+\begin{appendices}
 
 %\input{instructions_english}
-%\input{instructions_finnish}
+% \input{instructions_finnish}
 
 % \appendix{Sample Appendix\label{appendix:model}}
 % usually starts on its own page, with the name and number of the appendix at the top. 
@@ -266,7 +264,7 @@ Käytä muutamaa termipolkua (1--3), jotka alkavat juuritermistä ja joissa polu
 % In addition to complementing the main document, each appendix is also its own, independent entity.
 % This means that an appendix cannot be just an image or a piece of programming, but the appendix must explain its contents and meaning.
 
-% \end{appendices}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{appendices}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}

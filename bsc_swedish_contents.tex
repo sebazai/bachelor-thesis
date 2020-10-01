@@ -1,7 +1,58 @@
 
-\chapter{Introduktion}
+\chapter{Inledning}
 
-\chapter{Bakgrund}
+Redan för många årtionde har robot navigering med datorseende varit i stort popularitet i det vetenskapliga samfundet. <kårt om historia>
+
+Drönare är ett obemannat luftfordon som kan styras med hjälp av vision baserad, tröghets eller satellitnavigation \citep{geospatial}. För att roboter eller drönaren skulle kunna navigera autonomiskt måste den vara medveten om sitt läge, hastighet, kursriktning samt start- och slutplats. Andra faktorer som borde beaktas för att flyga från start till slutplatsen är hur drönaren kan behandla data från inbyggda sensorer i sig, det vill säga kartlägga miljön och egen position i denna miljö samt hur man planerar vägen utan att kollidera med hinder. Mest lovande forskning är inom vision baserad navigering med hjälp av datorseende.
+
+Avhandlingen kommer att fokusera på vilka metoder det finns för att kartlägga miljön och lokalisera sig själv med hjälp av datorseende, som refereras också som samtidig lokalisering och kartläggning med datorseende (VSLAM, Visual Simultaenous Localization and Mapping). Avhandlingen kommer att innehålla ett sammandrag av metoder som används med drönaren. Några frågor vi provar att svara på är varför används vision baserad navigation istället för andra metoder? Vad är för och nackdelar med vision baserad navigation när det kommer till drönaren? .....
+
+Avhandlingens struktur är följande, i kapitell 1 så skriver vi om navigering med hjälp av datorseende, kapitell 2 innehåller information om samtidig lokalisering och kartläggning och hur kartläggning kan grupperas samt vilka metoder används i olika grupper. Kapitell 3 analys?, Kapitell 4, sammandragning
+
+\chapter{Vision baserad navigation}
+
+Berätta om navigering här? + vision baserad navigering och fördelar jämfört med traditionella metoder?
+
+I vision baserad navigering används visuella sensorer för att få bilder som indata som sedan kan behandlas med algoritmer \citep{geospatial}. Visuella sensorer som kan användas är monokulära, stereo, RGB-D och fisheye kameror. Jämfört med traditionella navigerings metoder, det vill säga tröghets (INS, Inerital Navigation System) och satellitnavigation som använder sig av accelerometer, gyroskop eller GPS, så får kameror riklig information om sin omgivande miljö. Med kamerasensorer kan man uppfatta färg, textur och former samt de är billigare att operera och de kan inte bli störda av utomstående signaler eller upptäckas av utomstående entitet för att de är passiva. Laser eller ultraljud kan användas för att navigera med drönaren, men för att drönaren byggs mindre än förr och de har begränsad kapasitet med batteri så har dessa sensorer uteslutnas \citep{geospatial, 6385934}. Vision baserad navigering är för tillfället det mäst lovande forskningområde när det kommer till navigering av drönaren.
+
+\chapter{Samtidig lokalisering och kartläggning}
+
+Samtidig lokalisering och kartläggning är ett av de grundläggande problem i robot navigering \citep{slamproblem}. För autonomisk navigation behöver en robot veta sitt läge i miljön \citep{geospatial}. Med hjälp av kameror och bildbearbetning kan miljön kartläggas och drönaren lokalisera sig själv, detta kallas också för visuell samtidig lokalisering och karläggning (VSLAM). VSLAM kan delas i tre kategorier, som är kartlösa (mapless), kartbaserade (map-based) och kartbyggande (map-building) system. 
+
+\section{Kartlösa system}
+
+I system utan karta navigerar drönaren bara med hjälp av att observera tydliga egenskaper i miljön \citep{982903}. Dessa kan vara till exempel väggar, dörrar eller möbler. De mest använda metoder inom kartlösa system är optisk flöde (Optical flow) och spårning av egenskaper (Feature tracking). 
+
+\subsection{Optisk flöde}
+
+Santos-Victor et. al har användt optisk flöde i en robot för att imitera bin \citep{341094}. De placerade två kameror på varsin sida av en robot och beräknade hastigheten från bilderna av båda kamerorna med att ta fem bilder som utjämnas med gaussisk oskräpa och sedan de två sista utjämnade bilder används för att räkna medeltalet av optisk flödesvektorer. Om flödesvektorerna var samma på båda sidorna så for roboten rakt framåt, annars så far den mot den sida vilkens hastighet är mindre. Metoden som Santos-Victor använde för roboten fungerar bara om båda kamerorna är symmetriskt riktade från varandra när man tar i beaktande rörelseriktningen \citep{982903}. Denna teknik fungerar inte heller i texturlösa miljöer och det går inte att byta rörelseriktningen. Sedan detta har användning av optiska flödesmetoder forskats mera och forskaren har fått drönaren att uppskatta avstånd, hålla sin altitud, undvika hinder, beräkna hastighet och landa på en plattform som rör på sig \citep{6564752}.
+
+\subsection{Spåring av egenskaper}
+Spåring av egenskaper används för att skaffa information om föremål, så som linjer, hörn och olika former som inte ändras \citep{geospatial}. Med hjälp av dessa och föremålets relativa rörelse i sekventiella bilder kan man bestämma föremålets rörelse. Då drönaren navigerar i området, så kommer den troligtvis att se dessa föremål från olika perspektiv, som hjälper drönaren att navigera.
+
+\section{Kartbaserade system}
+
+Med kartbaserade system har drönaren en färdig vetskap om miljön i form av geometriska modell eller topologiska kartor \citep{982903}. Idén är att då roboten navigerar prövar den hitta landmärken från kameras bilder som är ekvivalenta till de landmärken som har getts åt roboten. När den hittat dessa så kan roboten kalkylera sin position i miljön. Med hjälp av kartan kan drönaren planera sin rörelse i förhand och ta omvägar där det behövs \citep{geospatial}. Det finns olika sätt att skapa 3D modell av miljön. Med 3D volymetriska sensorer kan man konstruera en 3D modell och spara denna information i en Octree struktur. Med strukturen kan datat om miljön packas i mindre format utan att tappa möjligheten att uppdatera informationen vid behov. En annan metod som tas upp är med stereovision sensorer göra en djuphetskarta och behandla data till plana ytor som minskar på missvisning som uppstår med användning av stereovision algoritmer när man bygger upp djuphetskartan.
+
+\section{Kartbyggande system}
+
+Kartbyggande system kan användas då det är svårt att navigera med en existerande karta om omgivningen, som i katastrofområden \citep{geospatial} Drönarna byggs mindre än förr och har svårigheter att flyga med komplexa sensorsmekanismer så som laser och ekolod. Med forskning kring vision baserad lokalisering och kartläggnings algoritmer, som använder kameror, kan drönarna nu flyga med monokulära och stereokameror som är billigare och lättare än andra sensorer. Karta-byggande systems bildbearbetning kan delas tre kategorier, som är indirekt, direkt och hybrid metoder.
+
+\subsection{Indirekta metoder}
+
+I bildbearbetning där används indirekta metoder tar man kännetecken ur bilden som är
+oförändrad för rotation, synvinkeländringar och rörelseoskräpa, dessa ges som indata i
+rörelseuppfattning och lokalisering. Indirekta metoder fungerar inte så bra i strukturlösa
+miljön, så därför behövs direkta metoder. 
+
+\subsection{Direkta metoder}
+
+I direkta metoder används geometriska parameter samt all information man får ur bilden och med hjälp av dessa så kan man hitta täta
+korrespondenser och konstruera en karta. 
+
+\subsection{Hybrida metoder}
+Hybrida metoder slår ihop indirekta och direkta metoderna med att först ta kännetecken ur bilden och sedan använda all information man får
+ur bilden för att få en bättre kännedom om omgivningen.
 
 \chapter{Analys}
 
