@@ -28,19 +28,77 @@ Rörelseparallax betyder att objekt rör på sig snabbare då de är närmare ob
 
 För att få former, kanter eller linjer ur bilder finns det olika algoritmer såsom SIFT (Scale-Invariant Feature Transform), HARRIS hörn upptäckare, SURF (Speeded Up Robust Features), ORB (Oriented FAST and Rotated BRIEF), med mera \citep{orb, slamproblem, mapbuildingsift}. SIFT, SURF och ORB prövar hitta egenskaper från bilderna som är invarianta för rotation, som menar att samma egenskaper kan hittas från olik synvinkel \citep{orb}. Enligt \cite{orb} är ORB mer energieffektiv än SIFT för att den kräver mindre beräkning för att hitta egenskaper, som menar att den är snabbare färdig utan att tappa effektivitet.
 
+\section{Lokalisering i omgivningen}
+
+Med att en robot lokaliserar sig själv menar vi att den tar reda på sin position i miljön \citep{982903}. Då man har en uppfattning om miljön, det vill säga en karta, så kan en drönare lokalisera sig själv med att ge den landmärken som den hittar då den navigerar eller så kan den observera dessa själv och associera dem med kartan som den har. Från bilderna ur kamerorna i drönaren identifieras landmärken, sedan matchas observerade landmärken med de som finns i kartan och efter det kan man estimera positionen av roboten.
+
+Positionen och orientationen av roboten beräknas med sannolikhetsberäkning baserat på tid och indata av sensorer \citep{ProbabilisticRobotics}. Då vi lokaliserar en robot så är roboten vid början vid någon plats, den rör på sig och sedan observerar landmärken. Då kan vi beteckna att för tidpunkt $t$, betecknas robotens position och orientation med $x_t$, rörelseinformation av roboten med $u_t$ och landmärken extraherade från kamerasensorer med $z_t$. För att $x_t$ är en kontinuerlig stokastisk variabel så kan betingade sannolikhetsfördelningen för $x_t$ skrivas som följande:
+
+\begin{align}
+    P(x_t | x_{0:t-1}, z_{1:t-1}, u_{1:t})
+\end{align}
+
+Där vi antar att roboten rör på sig $u_1$ före den skaffar sensorinformation $z_1$. Med Markovegenskapen, som betyder att en villkorlig sannolikhetsfördelning för en tidpunkt är bara beroende på dens tidigare sannolikhet. Då $x_t$ är den bästa framtidssyn så kan vi begränsa att $x_t$ är beroende bara på dens tidigare position $x_{t-1}$ och rörelseinformation $u_t$, se figur \ref{markov}. Betingade sannolikhetsfördelningen för $x_t$ kan då betecknas som följande:
+
+\begin{align}
+    P(x_t | x_{t-1} u_{t})
+\end{align}
+
+Om $x_t$ är den bästa framtidssyn så då är betingade sannolikhetsfördelningen för observerade landmärken $z_t$:
+
+\begin{align}
+    P(z_t | x_{0:t}, z_{1:t-1}, u_{1:t}) = P(z_t|x_t)
+\end{align}
+
+\begin{figure}[ht]
+    %\begin{figure}[tbh] t= top, b = bottom, h=here
+    \begin{center}
+    \includegraphics[width=0.75\textwidth]{markov.JPG}
+    \caption{En graf om lokalisering som visualiserar Markovegenskapen där till exempel $x_t$ är bara beroende av $x_{t-1}$ och $u_t$ \citep{ProbabilisticRobotics}.}
+    \label{markov}
+    \end{center}
+\end{figure}
+
+$P(x_t|x_{t-1} u_{t})$ är rörelseuppfattningssannolikhet och $P(z_t|x_t)$ är landmärkesuppfattningssannolikhet för roboten \citep{ProbabilisticRobotics}. 
+
+Positionen och orientationen av roboten kan beräknas med Bayes filter \citep{ProbabilisticRobotics}. Bayes filter är en rekursiv algoritm som beräknar aposteriorisannolikhet för robotens position $bel(x_t)$ baserat på robotens tidigare position $bel(x_{t-1})$, rörelseinformation $u_t$ och observerade landmärken $z_t$. Med hjälp av Bayes regler, lagen om total sannolikhet för kontinuerliga variablar och Markovegenskapen kan detta bevisas med matematisk induktion där vi antar at $bel(x_0)$ är sann då $t = 0$, altså roboten vet sin position vid början.
+
+\begin{align}
+bel(x_t) & = P(x_t | z_{1:t}, u_{1:t}) \tag{BF1}\label{BF1} \\
+        & = \eta P(z_t | x_t, z_{1:t-1}, u_{1:t}) P(x_t | z_{1:t-1}, u_{1:t}) \tag{BF2}\label{BF2}\\
+        & = \eta \underline{P(z_t | x_t)} P(x_t | z_{1:t-1}, u_{1:t}) \tag{BF3}\label{BF3}\\
+        & = \eta P(z_t | x_t) \underline{\int P(x_t | x_{t-1}, z_{1:t-1}, u_{1:t}) P(x_{t-1} | z_{1:t-1}, u_{1:t}) dx_{t-1}} \tag{BF4}\label{BF4}\\
+        & = \eta P(z_t | x_t) \int \underline{P(x_t | x_{t-1}, u_t)} P(x_{t-1} | z_{1:t-1}, u_{1:t}) dx_{t-1} \tag{BF5}\label{BF5}\\
+        & = \eta P(z_t | x_t) \int P(x_t | x_{t-1}, u_t) P(x_{t-1} | z_{1:t-1}, \underline{u_{1:t-1}}) dx_{t-1} \tag{BF6}\label{BF6}\\
+        & = \eta P(z_t | x_t) \int P(x_t | x_{t-1}, u_t) \underline{bel(x_{t-1})} dx_{t-1} \tag{BF7}\label{BF7}
+\end{align}
+
+Bayes filters definition är \ref{BF1}, det vill säga förtroende för roboten att den är vid $x_t$, som betecknas $bel(x_t)$, är samma som sannolikheten av $x_t$ givet $z_{1:t}$ och $u_{1:t}$. Med Bayes teorem kan detta skrivas om i format \ref{BF2}. Vid \ref{BF3} använder vi Markovegenskapen för $x_t$ så kan betingade sannolikheten för $z_t$ skrivas som landmärkesuppfattningssannolikheten. Med satsen om total sannolikhet för kontinuerliga variablar, som uttrycker sannolikhet för enskilda händelser till betingade sannolikhet, kan formeln skrivas om till \ref{BF4}. Vid \ref{BF5} och \ref{BF6} använder vi Markovegenskapen för $x_t$, se figur \ref{markov}. Till slut får vi \ref{BF7}, som bevisar med induktion att algoritmen fungerar rekursivt \citep{ProbabilisticRobotics}.
+
+Bayes filters algoritmen fungerar så att för varje $x_t$ beräknas två kritiska steg, som är spådom och korrigering \citep{ProbabilisticRobotics}. Spådomsdelen i algoritmen är delen där vi beräknar integralen för två faktorer: sannolikheten att rörelseinformationen $u_t$ tar oss till $x_t$ och den gamla förtroende av positionen $bel(x_{t-1})$. Korrigeringsdelen är då man multiplicerar spådomsdelen med sannolikhet att $z_t$ skulle observeras för varje möjliga $x_t$. Oftast är korrigeringsdelen inte en sannolikhet, alltså dens täthetsfunktion summa är inte 1 för varje värde, så därför används det en normering konstant $\eta$ för att normera sannolikheten. Ett steg av algoritmen är definierat vid \ref{BFA} som sedan görs rekursivt för resultatet av algoritmen och när man har ny rörelseinformation och landmärken.
+
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \SetAlgoRefName{BFA}
+    \label{BFA}
+    \FuncSty{BayesFilter($bel(x_{t-1})$, $u_t$, $z_t$):} \\
+    \ForAll{$x_t$}{
+        $spådom$ = $\int P(x_t | x_{t-1}, u_t) bel(x_{t-1}) dx_{t-1}$ \\
+        $bel(x_t)$ = $\eta P(z_t | x_t)$ $spådom$
+    }
+    \Return{$bel(x_t)$}
+    \caption{Bayes Filter Algoritm}
+\end{algorithm}
+
+Bayes filter är huvudsakliga algoritmen för att beräkna robotens position och orientation \citep{ProbabilisticRobotics}. Algoritmen baserar sig starkt på Markovegenskapen att det nuvarande läge är oberoende av tidigare data och framtidsdata. I robotnavigering är det inte dock så lätt att anta detta, för det skulle betyda att allt runtomkring roboten borde vara statiskt. Till exempel om en bil rör på sig då roboten navigerar så då man gör landmärkesuppfattning kommer Bayes filter att ge felaktig estimering. Bayes filtern är också basis för många andra lokaliseringsalgoritmer, som till exempel Kalman filter eller Markov localisation. 
+
+Positionen av roboten kan beräknas också utan kartan med att räkna distansen till landmärken och distansen mellan landmärken som extraheras ur bilder \citep{realslamproblem}. Lokalisering kan delas i global och lokal lokalisering \citep{982903, globalsubmaps}. Med global lokalisering har roboten ingen vetskap om sin position i början av navigeringen. I lokal lokalisering har roboten en ungefärlig eller exakt vetskap om sin plats vid början av navigeringen som den fått som indata. Lokala lokaliseringsmetoder strävar för att korrigera fel som uppstår av robotens rörelse. Globala lokaliseringsmetoder kan återvinna från verkliga misstag då man estimerar robotens position.
+
 \section{Kartläggning av omgivningen}
 
 En karta om miljön kan representeras i två (2D) eller tre (3D) dimensioner \citep{geospatial}. Kartor kan sparas i olika format, såsom datorstödd konstruktion (CAD, Computer-Aided Design), beläggningskarta (Occupancy Map), topologisk karta eller en enkel graf om landmärken och deras sammankopplingar \citep{982903}. En datorstödd konstruktion av miljön kan vara en mycket detaljerad representation av omgivningen. En beläggningskarta är en 2D eller 3D-modell av omgivningen som är sparat i ett rutsystem där rutor som är upptagna är någon objekt i miljön \citep{6095058, 982903}. 
 
 Kartan kan vara färdigt sparad för en drönare eller så kan miljön kartläggas från bilderna av sensorerna då den flyger \citep{geospatial}. Med 3D volymetriska sensorer kan man konstruera en 3D modell och spara denna information i en Octree struktur. Med strukturen kan data om miljön packas i mindre format utan att tappa möjligheten att uppdatera informationen vid behov. En annan metod som tas upp är med stereovisionsalgoritmer göra en djuphetskarta och behandla data till plana ytor som minskar på missvisning som uppstår med användning av stereovision algoritmer när man bygger upp djuphetskartan.
-
-\section{Lokalisering i omgivningen}
-
-Med att en robot lokaliserar sig själv menar vi att den tar reda på sin position \citep{982903}. Då man har en uppfattning om miljön, det vill säga en karta, så kan en drönare lokalisera sig själv med att ge den landmärken som den hittar då den navigerar eller så kan den observera dessa själv och associera dem med kartan som den har. Från bilderna ur kamerorna i drönaren identifieras landmärken, sedan matchas observerade landmärken med de som finns i kartan och efter det kan man estimera positionen av roboten. 
-
-Positionen av roboten kan beräknas också utan kartan med att räkna distansen till landmärken och distansen mellan landmärken som extraheras ur bilder \citep{realslamproblem}. För att estimera sin position i miljön används sannolikhetsberäkning med hjälp av rekursiv Bayes, som betyder att man beräknar sannolikheten av robotens position när man vet riktningen, hastigheten och observerade landmärken för varje tidpunkt. 
-
-Lokalisering kan delas i global och lokal lokalisering \citep{982903, globalsubmaps}. Med global lokalisering har roboten ingen vetskap om sin position i början av navigeringen. I lokal lokalisering har roboten en ungefärlig eller exakt vetskap om sin plats vid början av navigeringen som den fått som indata. Lokala lokaliseringsmetoder strävar för att korrigera fel som uppstår av robotens rörelse. Globala lokaliseringsmetoder kan återvinna från verkliga misstag då man estimerar robotens position.
 
 \chapter{Samtidig lokalisering och kartläggning}
 
@@ -90,11 +148,20 @@ Med hjälp av FPGA-kretsen har de fått dataförening med matriser att beräknas
 
 Med kartbaserade system har drönare en färdig vetskap om miljön som kan vara i form av geometriska modeller, topologiska kartor eller förhållande mellan landmärken \citep{982903}. Idén är att då roboten navigerar prövar den hitta landmärken från bilder som är lika till de landmärken som roboten vet om. När den hittat dessa så kan roboten beräkna sin position i miljön. Med hjälp av karta kan drönare planera sin rörelse i förhand och ta omvägar där det behövs \citep{geospatial}. 
 
-Kartbaserad lokalisering med datorseende kan delas upp i fyra steg, som är att skaffa sensorinformation, upptäcka landmärken från informationen med bildbearbetning, matcha observationerna med förväntan och beräkna positionen \citep{982903}. Det svåraste steget av dessa är att matcha observationerna med förväntan. Detta kallas för dataföreningsproblemet. Man kan inte med full säkerhet veta robotens position och då är det svårt att matcha landmärken från rätt synvinkel.
+Kartbaserad lokalisering med datorseende kan delas upp i fyra steg, som är följande \citep{982903}:
 
-Då kartan finns kan man fokusera på lokalisering av roboten \citep{982903}. I global lokalisering måste man lita på att man kan förena observationerna med informationen man har och ta i beaktande osäkerheten med att någon av observationerna kan matcha flera av de landmärken man vet om. Detta problem kan lösas till exempel med Monte Carlo lokalisation som i korthet fungerar så att en robot antar med lika sannolikhet sin position i kartan och när den rör på sig så observerar den ny information och kan beräkna sannolikheten att hur de som den observerar matchar den karta som den har \citep{772544}.
+\begin{itemize}
+    \item skaffa sensorinformation av kamerorna
+    \item upptäcka landmärken från informationen med bildbearbetning
+    \item matcha observationerna med förväntan
+    \item beräkna positionen av roboten
+\end{itemize}
 
-I lokal lokalisering måste lokaliseringsalgoritmen hålla koll på osäkerheten av robotens position då den rör på sig och vänder \citep{772544}. Då osäkerhet av sin position är för stor stannar roboten och beräknar sin position med hjälp av visuell information av bilderna, alltså minskar på osäkerheten.
+Det svåraste steget av dessa är att matcha observationerna med förväntan. Detta kallas för dataföreningsproblemet. Man kan inte med full säkerhet veta robotens position och då är det svårt att matcha landmärken från rätt synvinkel.
+
+Då kartan finns kan man fokusera på lokalisering av roboten \citep{982903}. I global lokalisering måste man lita på att man kan förena observationerna med informationen man har och ta i beaktande osäkerheten med att observationerna kan matcha flera av de landmärken man vet om. Detta problem kan lösas till exempel med Monte Carlo lokalisation eller Markov lokalisation. Monte Carlo lokalisation fungerar så att en robot antar med lika sannolikhet sin position i kartan vid början av navigeringen \citep{montecarlo}. Då roboten rör på sig så observerar den nya landmärken och kan beräkna sannolikheten att hur de landmärken den observerat matchar de landmärken i kartan som den vet om. Markov lokalisationsalgoritmen är nästan identisk till Bayes filtern som presenterades vid \ref{BFA}. Som indata används också kartan som man har för att estimera positionen av roboten.
+
+I lokal lokalisering måste lokaliseringsalgoritmen hålla koll på osäkerheten av robotens position då den rör på sig och vänder \citep{montecarlo}. Då osäkerhet av sin position är för stor stannar roboten och beräknar sin position med hjälp av visuell information av bilderna, alltså minskar på osäkerheten.
 
 \section{Kartbyggande system}
 
